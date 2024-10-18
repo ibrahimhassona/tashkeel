@@ -1,101 +1,127 @@
+"use client";
+import { useState, useEffect } from "react";
+import Head from "next/head";
+import { censorWords, tashkeel } from "@/utils/tashkeel";
 import Image from "next/image";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.js
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [inputText, setInputText] = useState("");
+  const [outputText, setOutputText] = useState("");
+  const [isDarkMode, setIsDarkMode] = useState(true);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  useEffect(() => {
+    // Check for user's preferred color scheme
+    if (typeof window !== "undefined") {
+      setIsDarkMode(window.matchMedia("(prefers-color-scheme: dark)").matches);
+    }
+  }, []);
+
+  const processText = async () => {
+    let processed = await tashkeel(inputText);
+    processed = censorWords(processed);
+    setOutputText(processed);
+  };
+
+  const copyText = (text) => {
+    navigator.clipboard.writeText(text);
+    alert("تم نسخ النص بنجاح!");
+  };
+
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
+  };
+
+  return (
+    <div
+      className={`min-h-screen ${
+        isDarkMode ? "bg-gray-900 text-white" : "bg-gray-100 text-gray-900"
+      } py-6 flex flex-col justify-start px-4 sm:px-6 lg:px-8`}
+    >
+      <Head>
+        <title>تَنْسِيقُ اللُّغَة</title>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      {/* ============= Logo =========== */}
+      <div className="flex items-center justify-center w-full">
+        <Image
+          src="/logo.png"
+          width={300}
+          height={300}
+          alt="خوارزميات لوجو"
+          className="rounded-full w-[80px] h-[80px] shadow-sm my-4"
+        />
+      </div>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">تَنْسِيقُ اللُّغَة</h1>
+        <button
+          onClick={toggleDarkMode}
+          className="p-2 rounded-full bg-gray-600"
+        >
+          {isDarkMode ? "☀️" : "🌙"}
+        </button>
+      </div>
+
+      <div className="max-w-md w-full mx-auto space-y-4">
+        <div
+          className={`${
+            isDarkMode ? "bg-gray-800" : "bg-white"
+          } rounded-lg p-4 relative`}
+        >
+          <textarea
+            id="inputText"
+            className="w-full bg-transparent resize-none outline-none"
+            rows="5"
+            value={inputText}
+            onChange={(e) => setInputText(e.target.value)}
+            placeholder="أدخل النص هنا..."
+            dir="rtl"
+          ></textarea>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+
+        <div
+          className={`${
+            isDarkMode ? "bg-gray-800" : "bg-white"
+          } rounded-lg p-4 relative`}
         >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          <div
+            id="outputText"
+            className="w-full min-h-[100px] bg-transparent outline-none overflow-auto"
+            dir="rtl"
+          >
+            {outputText}
+          </div>
+        </div>
+
+        {/* ------------ BTNS ----------- */}
+        <div className='w-full flex items-center justify-center gap-2'>
+          <button
+            onClick={processText}
+            className={`w-full flex items-center justify-center gap-2 ${isDarkMode ? 'bg-gray-800 hover:bg-black ':'bg-gray-900 hover:bg-gray-600 '} text-white cust-trans  font-bold py-2 px-4 rounded-md focus:outline-none focus:shadow-outline`}
+          >
+            معالجة النص
+          </button>
+          <button
+            onClick={() => copyText(outputText)}
+            className={`w-full flex items-center justify-center gap-2 ${isDarkMode ? 'bg-gray-800 hover:bg-black ':'bg-gray-900 hover:bg-gray-600 '} text-white cust-trans  font-bold py-2 px-4 rounded-md focus:outline-none focus:shadow-outline`}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+              />
+            </svg>
+            نسخ
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
