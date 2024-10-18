@@ -5,7 +5,7 @@ import "./globals.css";
 const cairo = Cairo({ subsets: ["arabic"], weight: ["400", "700"] });
 
 export const metadata = {
-  title:"ضَرَبَ الخَوارزميَّات",
+  title:"الفلتر الذكي",
   description: "تَمَّ انْشَاءُهُ لِاعْتِرَاضِنَا عَلَى حَذْفِ الْمَنْشُورَاتِ الَّتِى تُعَبِّرَ عَنْ بَعْضِ الْفِئَاتِ الْمَظْلُومِهِ وَالْمُضْطَهَضِينَ مِنْ فِيسْبُوك",
   icons: {
     icon: ['/favicon.ico?v=4'],
