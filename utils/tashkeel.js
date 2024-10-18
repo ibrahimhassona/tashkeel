@@ -1,8 +1,21 @@
-import { do_tashkeel } from "libtashkeel-wasm";
+import { initWasm, getWasm } from './wasm-loader';
 import { forbiddenWords } from "./forbiddenWords";
 
+let wasmInitialized = false;
+
 export async function tashkeel(text) {
-  const tam_Eltashkeel = do_tashkeel(text);
+  if (!wasmInitialized) {
+    await initWasm();
+    wasmInitialized = true;
+  }
+
+  const wasm = getWasm();
+  if (!wasm) {
+    console.error('WebAssembly module not loaded');
+    return text; // Return original text if WebAssembly is not loaded
+  }
+
+  const tam_Eltashkeel = wasm.do_tashkeel(text);
   return tam_Eltashkeel;
 }
 
